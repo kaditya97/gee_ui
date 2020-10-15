@@ -45,6 +45,7 @@ def index(request):
         "tile2019" : getTile2019(geometry),
         "tile2018" : getTile2018(geometry),
         "tile2017" : getTile2017(geometry),
+        "ndvi": ndvi(geometry),
         "band_viz" : getVisParam(),
         # "form" : form,
         "title" : "Carbon Monoxide Emission",
@@ -95,3 +96,23 @@ def getTile2019(geometry):
 
 def index_calculation(a,b):
     return a.subtract(b).divide(a.add(b))
+
+def ndvi(geometry):
+    # collecting landsat raw image
+    image = ee.ImageCollection("COPERNICUS/S2_SR").filterDate('2019-01-01','2019-04-30').median().clip(geometry)
+    ndvi_image = ndvi1(image)
+    viz_param = ndviParams()
+    map_id_dict = ee.Image(ndvi_image).getMapId(viz_param)
+    tile = str(map_id_dict['tile_fetcher'].url_format)
+    return tile
+
+def ndvi1(a):
+    return a.normalizedDifference(['B8', 'B4']).rename('NDVI')
+
+def ndviParams():
+    viz_param = {
+        "min" : -1,
+        "max" : 1,
+        "palette" : ['blue','white', 'DarkGreen'],
+    }
+    return viz_param
