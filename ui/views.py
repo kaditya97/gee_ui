@@ -66,14 +66,11 @@ def getVisParam():
 
 def getTile2017(geometry):
     transplanting = ee.ImageCollection('LANDSAT/LC08/C01/T1_RT').filterDate('2017-06-16','2017-07-15').mosaic().clip(geometry).select('B8')
-    print(transplanting)
     harvesting = ee.ImageCollection('LANDSAT/LC08/C01/T1_RT').filterDate('2017-09-16','2017-10-15').mosaic().clip(geometry).select('B8')
     pmi = index_calculation(harvesting , transplanting)
     viz_param = getVisParam()
     map_id_dict = ee.Image(pmi).getMapId(viz_param)
     tile = str(map_id_dict['tile_fetcher'].url_format)
-    print("Tile")
-    print(tile)
     return tile
 
 def getTile2018(geometry):
