@@ -143,8 +143,12 @@
           zoomOffset: -1,
           accessToken: 'pk.eyJ1IjoibG9zdGIxIiwiYSI6ImNqaTBjcGd4bjE2cGMza3M2MWEzcTRwd3gifQ.Ps6yKHol2bmEPndMSeYKKw'
       }).addTo(mymap);
+      
       var ndvi = L.tileLayer('{{ ndvi }}').addTo(mymap);
       var Evi = L.tileLayer('{{ Evi }}').addTo(mymap);
+      var ndbi = L.tileLayer('{{ ndbi }}').addTo(mymap);
+      var ndwi = L.tileLayer('{{ ndwi }}').addTo(mymap);
+
       $('#province').on('change', function(){
         clearMap()
         mymap.addLayer(basemap);
@@ -175,8 +179,9 @@
       var RenderedMap = {
           "Country Layer": mywms,
           "ndvi 2019 Jan-April":ndvi,
-          "Evi":Evi
-         
+          "Evi":Evi,
+          "ndbi 2019":ndbi,
+          'ndwi 2019':ndwi
       };
       var mylayer = L.control.layers(baseMaps1, RenderedMap).addTo(mymap);
 
