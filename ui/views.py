@@ -119,7 +119,8 @@ def ndviParams():
     return viz_param
 
 def Evi(geometry):
-    image = ee.ImageCollection("LANDSAT/LC08/C01/T1_SR").filterDate('2019-01-01','2019-04-30').filterMetadata("CLOUD_COVER","less_than",10).median().clip(geometry)
+    # added image that contain the toa correction
+    image = ee.ImageCollection("LANDSAT/LC08/C01/T1_TOA").filterDate('2019-01-01','2019-04-30').filterMetadata("CLOUD_COVER","less_than",10).median().clip(geometry)
     Evi_calclucate = Evi_function(image)
     viz_param = ndviParams()
     map_id_dict = ee.Image(Evi_calclucate).getMapId(viz_param)
