@@ -46,6 +46,7 @@ def index(request):
         "tile2018" : getTile2018(geometry),
         "tile2017" : getTile2017(geometry),
         "ndvi": ndvi(geometry),
+        "Evi":Evi(geometry),
         "band_viz" : getVisParam(),
         # "form" : form,
         "title" : "Carbon Monoxide Emission",
@@ -116,3 +117,20 @@ def ndviParams():
         "palette" : ['blue','white', 'DarkGreen'],
     }
     return viz_param
+
+def Evi(geometry):
+    image = ee.ImageCollection("LANDSAT/LC08/C01/T1_SR").filterDate('2019-01-01','2019-04-30').filterMetadata("CLOUD_COVER","less_than",10).median().clip(geometry)
+    Evi_calclucate = Evi_function(image)
+    viz_param = ndviParams()
+    map_id_dict = ee.Image(Evi_calclucate).getMapId(viz_param)
+    tile = str(map_id_dict['tile_fetcher'].url_format)
+    return tile
+
+def Evi_function(a):
+    evi = a.expression(
+    '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+      'NIR': a.select('B5'),
+      'RED': a.select('B4'),
+      'BLUE': a.select('B2')
+    })
+    return evi
