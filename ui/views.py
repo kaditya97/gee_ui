@@ -47,6 +47,8 @@ def index(request):
         "tile2017" : getTile2017(geometry),
         "ndvi": ndvi(geometry),
         "Evi":Evi(geometry),
+        'ndbi':ndbi(geometry),
+        'ndwi':ndwi(geometry),
         "band_viz" : getVisParam(),
         # "form" : form,
         "title" : "Carbon Monoxide Emission",
@@ -112,9 +114,9 @@ def ndvi1(a):
 
 def ndviParams():
     viz_param = {
-        "min" : -1,
-        "max" : 1,
-        "palette" : ['blue','white', 'DarkGreen'],
+        "min" : -0.4,
+        "max" : 0.6,
+        "palette" : ['blue','white','DarkGreen'],
     }
     return viz_param
 
@@ -135,3 +137,48 @@ def Evi_function(a):
       'BLUE': a.select('B2')
     })
     return evi
+
+# adding the NDBI 
+def ndbi(geometry):
+    image = ee.ImageCollection("COPERNICUS/S2").filterDate('2019-01-01','2019-12-30').median().clip(geometry)
+    ndbi_image = ndbiCalculate(image)
+    ndbi_visulaize = ndbiParam()
+    map_id_dict = ee.Image(ndbi_image).getMapId(ndbi_visulaize)
+    tile = str(map_id_dict['tile_fetcher'].url_format)
+    return tile
+
+def ndbiCalculate(a):
+    NIR = a.select('B8')
+    SWIR = a.select('B11')
+    return SWIR.subtract(NIR).divide(SWIR.add(NIR))
+
+def ndbiParam():
+    viz_param = {
+         "min" : -0.8,
+        "max" : 0.2,
+        "palette" : ['blue','green','red'],
+    }
+    return viz_param
+    # gives the value nearly equal to 0.1 - 0.3 for the built up area in nepal
+
+# adding the ndwi 
+def ndwi(geometry):
+    image = image = ee.ImageCollection("LANDSAT/LC08/C01/T1_TOA").filterDate('2019-01-01','2019-12-30').filterMetadata('CLOUD_COVER','less_than',10).median().clip(geometry)
+    ndwi_image = ndwiCalculate(image)#calculate the ndwi
+    ndwi_visual = ndwiParms()#gives the visula varaible
+    map_id_dict = ee.Image(ndwi_image).getMapId(ndwi_visual)
+    tile = str(map_id_dict['tile_fetcher'].url_format)
+    return tile
+
+def ndwiCalculate(a):
+    GREEN = a.select("B3")
+    SWIR = a.select("B6")
+    return GREEN.subtract(SWIR).divide(GREEN.add(SWIR))
+
+def ndwiParms():
+    viz_param = {
+        "min" : -0.2,
+        "max" : 0.5,
+        "palette" : ['green','red','blue'],
+    }
+    return viz_param
