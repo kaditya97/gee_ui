@@ -15,6 +15,8 @@ import json
 
 def index(request):
     coord=''
+    from_date = '2019-01-01'
+    end_date = '2019-04-30'
     if request.method == "POST":
         form = ImportGeojsonfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -25,33 +27,26 @@ def index(request):
                 coord = feature.geometry.coordinates
                 gtype = feature.geometry.type
                 print(gtype)
+            from_date = request.POST['from_date']
+            end_date = request.POST['end_date']
     # file_ = open(os.path.join(PROJECT_ROOT, 'filename'))
     form = ImportGeojsonfileForm()
     if(coord!=''):
         geometry = ee.Geometry.MultiPolygon(coord)
     else:
-        geometry = ee.Geometry.Polygon([[[84.97873462030498, 27.87424989960898],
-            [84.74527514764873, 27.563032482426987],
-            [85.20670092889873, 27.385144636789754],
-            [85.69833911249248, 27.368071821574812],
-            [85.95102465936748, 27.57277145564543],
-            [86.04166186639873, 27.840253798218345],
-            [85.70657885858623, 27.973748526646474],
-            [85.55826342889873, 27.95676744082692],
-            [85.29733813592998, 27.910662458572368]]])
+        geometry = ee.Geometry.Polygon([[[83.829803, 28.316455],
+            [84.157677, 28.316455],
+            [84.157677, 28.150463],
+            [83.829803, 28.150463]]])
 
     context = {
-        # "tile2020" : getTile2020(geometry),
-        "tile2019" : getTile2019(geometry),
-        "tile2018" : getTile2018(geometry),
-        "tile2017" : getTile2017(geometry),
-        "ndvi": ndvi(geometry),
-        "Evi":Evi(geometry),
+        "ndvi": ndvi(geometry,from_date,end_date),
+        "Evi":Evi(geometry, from_date, end_date),
         "band_viz" : getVisParam(),
         # "form" : form,
         "title" : "Carbon Monoxide Emission",
-        "startDate" : '2020-04-01',
-        "endDate" : '2020-04-24',
+        "startDate" : '2019-01-01',
+        "endDate" : '2019-04-30',
         "form":form,
     }
 
@@ -65,39 +60,14 @@ def getVisParam():
     }
     return viz_param
 
-def getTile2017(geometry):
-    transplanting = ee.ImageCollection('LANDSAT/LC08/C01/T1_RT').filterDate('2017-06-16','2017-07-15').mosaic().clip(geometry).select('B8')
-    harvesting = ee.ImageCollection('LANDSAT/LC08/C01/T1_RT').filterDate('2017-09-16','2017-10-15').mosaic().clip(geometry).select('B8')
-    pmi = index_calculation(harvesting , transplanting)
-    viz_param = getVisParam()
-    map_id_dict = ee.Image(pmi).getMapId(viz_param)
-    tile = str(map_id_dict['tile_fetcher'].url_format)
-    return tile
-
-def getTile2018(geometry):
-    transplanting = ee.ImageCollection('LANDSAT/LC08/C01/T1_RT').filterDate('2018-06-16','2018-07-15').mosaic().clip(geometry).select('B8')
-    harvesting = ee.ImageCollection('LANDSAT/LC08/C01/T1_RT').filterDate('2018-09-16','2018-10-15').mosaic().clip(geometry).select('B8')
-    pmi = index_calculation(harvesting , transplanting)
-    viz_param = getVisParam()
-    map_id_dict = ee.Image(pmi).getMapId(viz_param)
-    tile = str(map_id_dict['tile_fetcher'].url_format)
-    return tile
-
-def getTile2019(geometry):
-    transplanting = ee.ImageCollection('LANDSAT/LC08/C01/T1_RT').filterDate('2019-06-16','2019-07-15').median().clip(geometry).select('B8')
-    harvesting = ee.ImageCollection('LANDSAT/LC08/C01/T1_RT').filterDate('2019-09-16','2019-10-15').median().clip(geometry).select('B8')
-    pmi = index_calculation(harvesting , transplanting)
-    viz_param = getVisParam()
-    map_id_dict = ee.Image(pmi).getMapId(viz_param)
-    tile = str(map_id_dict['tile_fetcher'].url_format)
-    return tile
-
 def index_calculation(a,b):
     return a.subtract(b).divide(a.add(b))
 
-def ndvi(geometry):
+def ndvi(geometry, from_date, end_date):
     # collecting landsat raw image
-    image = ee.ImageCollection("COPERNICUS/S2_SR").filterDate('2019-01-01','2019-04-30').median().clip(geometry)
+    print(from_date)
+    print(end_date)
+    image = ee.ImageCollection("COPERNICUS/S2_SR").filterDate(from_date, end_date).median().clip(geometry)
     ndvi_image = ndvi1(image)
     viz_param = ndviParams()
     map_id_dict = ee.Image(ndvi_image).getMapId(viz_param)
@@ -115,9 +85,9 @@ def ndviParams():
     }
     return viz_param
 
-def Evi(geometry):
+def Evi(geometry, from_date, end_date):
     # added image that contain the toa correction
-    image = ee.ImageCollection("LANDSAT/LC08/C01/T1_TOA").filterDate('2019-01-01','2019-04-30').filterMetadata("CLOUD_COVER","less_than",10).median().clip(geometry)
+    image = ee.ImageCollection("LANDSAT/LC08/C01/T1_TOA").filterDate(from_date,end_date).filterMetadata("CLOUD_COVER","less_than",10).median().clip(geometry)
     Evi_calclucate = Evi_function(image)
     viz_param = ndviParams()
     map_id_dict = ee.Image(Evi_calclucate).getMapId(viz_param)
