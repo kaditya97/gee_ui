@@ -148,7 +148,7 @@
       var Evi = L.tileLayer('{{ Evi }}').addTo(mymap);
       var ndbi = L.tileLayer('{{ ndbi }}').addTo(mymap);
       var ndwi = L.tileLayer('{{ ndwi }}').addTo(mymap);
-
+      var forestchange = L.tileLayer('{{ forestchange }}').addTo(mymap);
       $('#province').on('change', function(){
         clearMap()
         mymap.addLayer(basemap);
@@ -181,7 +181,8 @@
           "ndvi 2019 Jan-April":ndvi,
           "Evi":Evi,
           "ndbi 2019":ndbi,
-          'ndwi 2019':ndwi
+          'ndwi 2019':ndwi,
+          'forest Change 2000-2019':forestchange,
       };
       var mylayer = L.control.layers(baseMaps1, RenderedMap).addTo(mymap);
 

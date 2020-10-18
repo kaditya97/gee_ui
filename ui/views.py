@@ -44,6 +44,7 @@ def index(request):
         "Evi":Evi(geometry, from_date, end_date),
         'ndbi':ndbi(geometry, from_date, end_date),
         'ndwi':ndwi(geometry, from_date, end_date),
+        'forestchange':forestchange(geometry),
         "band_viz" : getVisParam(),
         "geometry" : coord,
         "title" : "Earthengine api",
@@ -146,3 +147,14 @@ def ndwiParms():
         "palette" : ['green','red','blue'],
     }
     return viz_param
+
+def forestchange(geometry):
+    forest_image = ee.Image("UMD/hansen/global_forest_change_2019_v1_7").clip(geometry)
+    forest_visual = {
+        'bands': ['loss', 'treecover2000', 'gain'],
+        'max': [1, 255, 1]
+    }
+    map_id_dict = ee.Image(forest_image).getMapId(forest_visual)
+    # forest loss as red, and forest gain as blue
+    tile = str(map_id_dict['tile_fetcher'].url_format)
+    return tile
