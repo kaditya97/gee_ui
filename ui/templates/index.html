@@ -87,10 +87,12 @@
     <div class="ui-layout-center">
       <div id="mapid"></div>
     </div>
-    <div class="ui-layout-east">
+    <div class="ui-layout-east p-2">
       <div class="checkbox-title"><label class="checkbox-title">Layers</label><br></div>
-        <label class="checkbox-inline"><input type="checkbox" value="">Paddy Gain</label><br>
-        <label class="checkbox-inline"><input type="checkbox" value="">Paddy Loss</label><br>
+        <label class="checkbox-inline"><input type="checkbox" checked data-toggle="toggle">NDVI</label><br>
+        <label class="checkbox-inline"><input type="checkbox" checked data-toggle="toggle">EVI</label><br>
+        <label class="checkbox-inline"><input type="checkbox" checked data-toggle="toggle">NDBI</label><br>
+        <label class="checkbox-inline"><input type="checkbox" checked data-toggle="toggle">NDWI</label><br>
     </div>
     <div class="ui-layout-south">
       <div class="ui-layout-center">
@@ -143,7 +145,6 @@
           zoomOffset: -1,
           accessToken: 'pk.eyJ1IjoibG9zdGIxIiwiYSI6ImNqaTBjcGd4bjE2cGMza3M2MWEzcTRwd3gifQ.Ps6yKHol2bmEPndMSeYKKw'
       }).addTo(mymap);
-      
       var ndvi = L.tileLayer('{{ ndvi }}').addTo(mymap);
       var Evi = L.tileLayer('{{ Evi }}').addTo(mymap);
       var ndbi = L.tileLayer('{{ ndbi }}').addTo(mymap);
