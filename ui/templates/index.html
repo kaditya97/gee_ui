@@ -32,94 +32,70 @@
    <link rel="stylesheet" href="{% static "css/layout.css" %}">
 </head>
 <body>
-  <div id="top">
-    <nav class="navbar navbar-light bg-warning ">
-      <a href="index.html" class="navbar-brand"><b>Geoneer</b> | Food for Thoughts <img src={% static "img/logo.png" %} height=40 alt="Logo"> </a>
-      <form class="form-inline">
-        <input class="form-control mr-sm-2" type="text" placeholder="Username" aria-label="username">
-        <input class="form-control mr-sm-2" type="password" placeholder="Password" aria-label="password">
-        <button class="btn btn-sm btn-outline-success my-2 my-sm-0" type="submit">Login</button>
-      </form>
-    </nav>
-  </div>
   <div id="a-container">
     <div class="ui-layout-west">
       <div class='row'>
         <nav>
           <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <a class="nav-item nav-link active" id="nav-first-tab" data-toggle="tab" href="#nav-first" role="tab" aria-controls="nav-first" aria-selected="true">Choose</a>
-            <a class="nav-item nav-link" id="nav-second-tab" data-toggle="tab" href="#nav-second" role="tab" aria-controls="nav-second" aria-selected="false">Import</a>
-            <a class="nav-item nav-link" id="nav-third-tab" data-toggle="tab" href="#nav-third" role="tab" aria-controls="nav-third" aria-selected="false" onclick="draw()">Draw</a>
+            <a class="nav-item nav-link" id="nav-first-tab" data-toggle="tab" href="#nav-first" role="tab" aria-controls="nav-first" aria-selected="false">Import</a>
+            <a class="nav-item nav-link" id="nav-second-tab" data-toggle="tab" href="#nav-second" role="tab" aria-controls="nav-second" aria-selected="false" onclick="draw()">Draw</a>
           </div>
         </nav>
     </div>
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-first" role="tabpanel" aria-labelledby="nav-first-tab">
-            <div class="form-group">
-                <label class="select-title" for="province">Select ROI:</label>
-                <select class="form-control custom-control" id="province">
-                <option value="1">Province One</option>
-                <option value="2">Province Two</option>
-                <option value="3">Bagmati</option>
-                <option value="4">Gandaki</option>
-                <option value="5">Province 5</option>
-                <option value="6">Sudur Pashchim</option>
-                <option value="7">Karnali</option>
-                </select>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="nav-second" role="tabpanel" aria-labelledby="nav-second-tab">
-          <form enctype="multipart/form-data" method="post" action="">
-            <label for="import_file">Import File</label><br />
-            <input type="file" name=import_file /><br /><br />
-            <label for="from_date">Start Date</label><br />
-            <input type="date" name=from_date /><br /><br />
-            <label for="end_date">End Date</label><br />
-            <input type="date" name=end_date /><br /><br />
-            <input type="submit"/>
+          <div class="col-md-12">
+          <form id="formdata" method="post" enctype="multipart/form-data" action="">
+            <center>
+              <h2 class="m-3">Google Earth Engine</h2>
+            </center>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="indicator" class="select">Graphical Indicator</label>
+                  <select name="indicator" id="indicator" required="required" class="form-control inline">
+                    <option value="ndvi">NDVI</option>
+                    <option value="ndbi">NDBI</option>
+                    <option value="ndwi">NDWI</option>
+                    <option value="hillshade">Hillshade</option>
+                    <option value="slope">Slope</option>
+                    <option value="aspect">Aspect</option>
+                    <option value="lulc">Land Use Land cover</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="from_date">Start Date</label>
+                  <input id="from_date" name="from_date" type="date" class="form-control">
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="end_date">End Date</label>
+                  <input id="end_date" name="end_date" type="date" class="form-control">
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="import_file">Upload Geojson File</label>
+                  <input id="import_file" name="import_file" type="file" class="form-control-file">
+                </div>
+              </div>
+            </div>
+            <br><br>
+            <center><button id="sub" type="submit" class="btn btn-primary">Add Layer</button></center>
+            <br>
           </form>
+        </div>
           </div>
-            <div class="tab-pane fade" id="nav-third" role="tabpanel" aria-labelledby="nav-third-tab">
+            <div class="tab-pane fade" id="nav-second" role="tabpanel" aria-labelledby="nav-second-tab">
              <h4>Use Draw buttons to draw region of interest</h4>
           </div>
     </div>
     </div>
     <div class="ui-layout-center">
       <div id="mapid"></div>
-    </div>
-    <div class="ui-layout-east p-2">
-      <div class="checkbox-title"><label class="checkbox-title">Layers</label><br></div>
-        <label class="checkbox-inline"><input type="checkbox" checked data-toggle="toggle">NDVI</label><br>
-        <label class="checkbox-inline"><input type="checkbox" checked data-toggle="toggle">EVI</label><br>
-        <label class="checkbox-inline"><input type="checkbox" checked data-toggle="toggle">NDBI</label><br>
-        <label class="checkbox-inline"><input type="checkbox" checked data-toggle="toggle">NDWI</label><br>
-    </div>
-    <div class="ui-layout-south">
-      <div class="ui-layout-center">
-          <div class='row'>
-            <nav>
-              <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <a class="nav-item nav-link active" id="nav-first-tab" data-toggle="tab" href="#detail-first" role="tab" aria-controls="nav-first" aria-selected="true">Paddy Production</a>
-                <a class="nav-item nav-link" id="nav-second-tab" data-toggle="tab" href="#detail-second" role="tab" aria-controls="nav-second" aria-selected="false">Yearly Paddy Gain</a>
-                <a class="nav-item nav-link" id="nav-third-tab" data-toggle="tab" href="#detail-third" role="tab" aria-controls="nav-third" aria-selected="false">Other Chart</a>
-                {% comment %} <a class="nav-item nav-link" id="nav-third-tab" data-toggle="tab" href="#detail-fourth" role="tab" aria-controls="nav-third" aria-selected="false">Item Four</a>
-                <a class="nav-item nav-link" id="nav-third-tab" data-toggle="tab" href="#detail-fifth" role="tab" aria-controls="nav-third" aria-selected="false">Item Five</a> {% endcomment %}
-              </div>
-            </nav>
-          </div>
-          <div class="tab-pane fade show active" id="detail-first" role="tabpanel" aria-labelledby="nav-first-tab">
-
-          <h1>Chart Section to Represent Yearly Representation of Paddy </h1>
-          </div>
-          <div class="tab-pane fade" id="detail-second" role="tabpanel" aria-labelledby="nav-second-tab">
-          <h2>Chart Section to Represent Yearly Loss / Gain of Paddy</h2>
-        </div>
-
-        <div class="tab-pane fade" id="detail-third" role="tabpanel" aria-labelledby="nav-third-tab">
-          <h3>Chart Section to represent the  other charts as per requirement ...... </h3>
-        </div>
-        
-      </div>
     </div>
   </div>
     
@@ -130,10 +106,7 @@
     <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
     <script src={% static "js/jquery-ui.min.js" %}></script>
     <script src={% static "js/layout.js" %}></script>
-    <script src={% static "js/main.js" %}></script>
     <script src={% static "js/dropzone.js" %}></script>
-    <script src="{% static "js/nepal_district.geojson" %}"></script>
-    <script src="{% static "js/map.js" %}"></script>
     <script>
       var province;
       var mymap = L.map('mapid').setView([28.194081, 84.176445], 11);
@@ -162,23 +135,11 @@
         mymap.removeLayer(layer);
       });
     }   
-  //load admin layer data form geoserver
-  var mywms = L.tileLayer.wms(
-  "http://tajirisk.ait.ac.th:8080/geoserver/generateMap/wms",
-      {
-        layers: "generateMap:nepal",
-        format: "image/png",
-        transparent: true,
-        version: "1.1.0",
-        attribution: "Nepal layer",
-      }
-    );
 
     var baseMaps1 = {
         "OSM" :basemap,
       };
       var RenderedMap = {
-          "Country Layer": mywms,
           "ndvi 2019 Jan-April":ndvi,
           "Evi":Evi,
           "ndbi 2019":ndbi,
@@ -227,50 +188,9 @@ function draw(){
 }
       $(document).ready(function () {
             $('#a-container').layout({
-              south__size: .30,
-              west__size: .20,
-              east__size: .20,
-              south__childOptions: {
-                  west__size: .20,
-                  east__size: .20
-			      }
+              west__size: .25,
           });
         });
-
-// var url = `https://master.demo.geonode.org/geoserver/geonode/ows?service=WFS&version=1.0.0&request=GetFeature&CQL_FILTER:${column}=${value}&typeName=geonode%3Anepal3&access_token=ZXKRZlrPDpkEcPs90Gt6isGv1vT1HM&maxFeatures=50&outputFormat=application%2Fjson`
-
-// ajax request handler
-function handleAjax(column, value) {
-  $.ajax("http://tajirisk.ait.ac.th:8080/geoserver/wfs", {
-    type: "GET",
-    data: {
-      service: "WFS",
-      version: "1.1.0",
-      request: "GetFeature",
-      typename: `generateMap:nepal`,
-      CQL_FILTER: `${column}='${value}'`,
-      srsname: "EPSG:4326",
-      outputFormat: "text/javascript",
-    },
-    dataType: "jsonp",
-    jsonpCallback: "callback:handleJson",
-    jsonp: "format_options",
-  });
-}
-
-// the ajax callback function
-function handleJson(data) {
-  selectedArea = L.geoJson(data, {
-    // style: geoJsonStyle,
-    onEachFeature: function (feature, layer) {
-      district = feature.properties.first_d;
-      layer.bindPopup(
-        `District: ${district} </br>`
-      );
-    },
-  }).addTo(mymap);
-  mymap.fitBounds(selectedArea.getBounds());
-}
 
     </script>
 </body>

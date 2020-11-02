@@ -89,12 +89,8 @@ div.lower-middle{
     padding: 0;
     box-sizing: border-box;
 }
-#top{
-    height: 10vh;
-    width: 100vw;
-}
 #a-container{
-    height: 90vh;
+    height: 100vh;
     width: 100vw;
 }
 #mapid{
@@ -104,4 +100,7 @@ div.lower-middle{
 .ui-layout-center, .ui-layout-west, .ui-layout-south, .ui-layout-east {
     margin:  0!important;
     padding: 0!important;
+}
+form{
+    font-size: 1.5rem;
 }
